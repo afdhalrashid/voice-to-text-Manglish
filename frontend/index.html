@@ -344,7 +344,14 @@
                     body: formData
                 });
 
-                const data = await response.json();
+                const contentType = response.headers.get('content-type') || '';
+                let data;
+                if (contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    const text = await response.text();
+                    throw new Error(`Server returned ${response.status} (expected JSON). Check server logs.`);
+                }
 
                 loading.classList.remove('show');
 
@@ -357,7 +364,12 @@
                 }
             } catch (err) {
                 loading.classList.remove('show');
-                error.textContent = `Error: ${err.message}. Please check your connection and try again.`;
+                const msg = err.message || String(err);
+                if (msg.includes('expected JSON') || msg.includes('did not match')) {
+                    error.textContent = 'Server error or invalid response. Please check server logs (e.g. supervisor, nginx) and try again.';
+                } else {
+                    error.textContent = `Error: ${msg}. Please check your connection and try again.`;
+                }
                 error.classList.add('show');
             } finally {
                 transcribeBtn.disabled = false;

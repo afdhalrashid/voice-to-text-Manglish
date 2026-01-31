@@ -1,0 +1,8 @@
+venv
+.venv
+__pycache__
+.git
+.whisper_cache
+*.pyc
+.env
+.DS_Store

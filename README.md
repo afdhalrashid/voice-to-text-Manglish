@@ -15,10 +15,16 @@ A web application that converts uploaded voice recordings to text, with excellen
 
 - Python 3.8 or higher
 - pip (Python package manager)
+- **ffmpeg** (required by Whisper for audio decoding)
 
 ## Installation
 
-1. **Clone or navigate to the project directory:**
+1. **Install ffmpeg** (required for transcription):
+   - **macOS (Homebrew):** `brew install ffmpeg`
+   - **Ubuntu/Debian:** `sudo apt install ffmpeg`
+   - **Windows:** Download from [ffmpeg.org](https://ffmpeg.org/download.html) or use `winget install ffmpeg`
+
+2. **Clone or navigate to the project directory:**
    ```bash
    cd VoiceToText
    ```
@@ -111,7 +117,38 @@ model = whisper.load_model("base")  # Change "base" to your preferred model
 
 Maximum file size: 100MB
 
+## Deployment (server)
+
+When you deploy to a server, **ffmpeg must be installed on that server** or transcription will fail with `No such file or directory: 'ffmpeg'`.
+
+**On the server**, run one of the following (depending on OS):
+
+- **Ubuntu / Debian:**
+  ```bash
+  sudo apt update && sudo apt install -y ffmpeg
+  ```
+- **CentOS / RHEL / Fedora:**
+  ```bash
+  sudo yum install -y ffmpeg
+  ```
+  or (Fedora/newer RHEL): `sudo dnf install -y ffmpeg`
+- **Alpine (e.g. minimal Docker):**
+  ```bash
+  apk add --no-cache ffmpeg
+  ```
+
+Then install Python dependencies and run the app as usual. Restart the app after installing ffmpeg.
+
+**Alternatively**, use the included Docker setup so ffmpeg is installed in the image:
+```bash
+docker build -t voicetotext .
+docker run -p 5000:5000 voicetotext
+```
+
 ## Troubleshooting
+
+### Transcription failed: No such file or directory: 'ffmpeg'
+The server (or container) where the app runs does not have ffmpeg installed. Install ffmpeg on the server — see [Deployment (server)](#deployment-server) above.
 
 ### Model download issues
 If the model fails to download automatically, you can manually download it:
