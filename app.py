@@ -5,6 +5,7 @@ import tempfile
 from werkzeug.utils import secure_filename
 import logging
 from logging.handlers import RotatingFileHandler
+import numpy as np
 
 # Set Whisper cache directory to project folder (to avoid permission issues)
 # This must be set before importing whisper
@@ -62,6 +63,19 @@ def load_model():
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def make_json_serializable(obj):
+    """Convert numpy/types to native Python so jsonify() works."""
+    if isinstance(obj, (np.integer, np.floating)):
+        return float(obj) if isinstance(obj, np.floating) else int(obj)
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    if isinstance(obj, dict):
+        return {k: make_json_serializable(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [make_json_serializable(v) for v in obj]
+    return obj
 
 @app.route('/')
 def index():
@@ -121,11 +135,17 @@ def transcribe():
         
         logger.info(f"Transcription completed. Length: {len(text)} characters")
         
+        # Whisper segments contain numpy types; convert so jsonify() can serialize
+        segments = make_json_serializable(result.get('segments', []))
+        language = result.get('language', 'unknown')
+        if hasattr(language, 'item'):  # numpy scalar
+            language = str(language)
+        
         return jsonify({
             "success": True,
             "text": text,
-            "language": result.get('language', 'unknown'),
-            "segments": result.get('segments', [])
+            "language": language,
+            "segments": segments
         })
         
     except Exception as e:
