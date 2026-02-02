@@ -4,20 +4,41 @@ import os
 import tempfile
 from werkzeug.utils import secure_filename
 import logging
+from logging.handlers import RotatingFileHandler
 
 # Set Whisper cache directory to project folder (to avoid permission issues)
 # This must be set before importing whisper
 WHISPER_CACHE_DIR = os.path.join(os.path.dirname(__file__), '.whisper_cache')
 os.makedirs(WHISPER_CACHE_DIR, exist_ok=True)
 
+# Log file for voice-to-text processing and errors
+LOG_DIR = os.path.join(os.path.dirname(__file__), 'logs')
+os.makedirs(LOG_DIR, exist_ok=True)
+LOG_FILE = os.path.join(LOG_DIR, 'voice2text.log')
+
 import whisper
 
 app = Flask(__name__, static_folder='frontend')
 CORS(app)
 
-# Configure logging
+# Configure logging: console + rotating log file
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+file_handler = RotatingFileHandler(
+    LOG_FILE,
+    maxBytes=5 * 1024 * 1024,  # 5 MB
+    backupCount=5,
+    encoding='utf-8'
+)
+file_handler.setLevel(logging.INFO)
+file_formatter = logging.Formatter(
+    '%(asctime)s | %(levelname)s | %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
 
 # Configure upload settings
 UPLOAD_FOLDER = 'uploads'
@@ -108,10 +129,14 @@ def transcribe():
         })
         
     except Exception as e:
-        logger.error(f"Error during transcription: {str(e)}", exc_info=True)
+        filename_ctx = f" (file: {filename})" if 'filename' in locals() else ""
+        logger.error(f"Error during transcription{filename_ctx}: {str(e)}", exc_info=True)
         # Clean up file if it exists
         if 'temp_path' in locals() and os.path.exists(temp_path):
-            os.remove(temp_path)
+            try:
+                os.remove(temp_path)
+            except OSError:
+                logger.warning(f"Could not remove temp file: {temp_path}")
         return jsonify({"error": f"Transcription failed: {str(e)}"}), 500
 
 if __name__ == '__main__':
