@@ -17,9 +17,11 @@ LOG_DIR = os.path.join(os.path.dirname(__file__), 'logs')
 os.makedirs(LOG_DIR, exist_ok=True)
 LOG_FILE = os.path.join(LOG_DIR, 'voice2text.log')
 
+from werkzeug.middleware.proxy_fix import ProxyFix
 import whisper
 
 app = Flask(__name__, static_folder='frontend')
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 CORS(app)
 
 # Configure logging: console + rotating log file
