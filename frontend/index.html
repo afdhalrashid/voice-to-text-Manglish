@@ -223,9 +223,225 @@
         .supported-formats strong {
             color: #667eea;
         }
+
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.2em;
+        }
+
+        .nav-icon {
+            font-size: 1.5em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            background: #f0f2ff;
+        }
+
+        .nav-links a.logout-link {
+            background: #dc3545;
+            color: white;
+        }
+
+        .nav-links a.logout-link:hover {
+            background: #c82333;
+        }
+
+        body {
+            padding-top: 80px;
+        }
+
+        /* Speaker Display Styles */
+        .speaker-info {
+            background: #f8f9ff;
+            border: 2px solid #e0e4ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .speaker-count {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .speaker-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .speaker-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .speaker-badge.speaker-0 { background: #e3f2fd; color: #1976d2; }
+        .speaker-badge.speaker-1 { background: #f3e5f5; color: #7b1fa2; }
+        .speaker-badge.speaker-2 { background: #e8f5e9; color: #388e3c; }
+        .speaker-badge.speaker-3 { background: #fff3e0; color: #f57c00; }
+        .speaker-badge.speaker-4 { background: #fce4ec; color: #c2185b; }
+        .speaker-badge.speaker-5 { background: #e0f2f1; color: #00796b; }
+
+        .segmented-result {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid #e0e4ff;
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+        }
+
+        .transcription-segment {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #fafafa;
+            border-left: 4px solid #667eea;
+        }
+
+        .transcription-segment.speaker-0 { border-left-color: #1976d2; background: #e3f2fd; }
+        .transcription-segment.speaker-1 { border-left-color: #7b1fa2; background: #f3e5f5; }
+        .transcription-segment.speaker-2 { border-left-color: #388e3c; background: #e8f5e9; }
+        .transcription-segment.speaker-3 { border-left-color: #f57c00; background: #fff3e0; }
+        .transcription-segment.speaker-4 { border-left-color: #c2185b; background: #fce4ec; }
+        .transcription-segment.speaker-5 { border-left-color: #00796b; background: #e0f2f1; }
+
+        .segment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.85em;
+        }
+
+        .segment-speaker {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .segment-time {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .segment-text {
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .language-options, .diarization-options {
+            background: #f8f9ff;
+            border: 2px solid #e0e4ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .language-options h3, .diarization-options h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .option-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .option-group label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .option-group input {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            width: 80px;
+        }
+
+        .language-select {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .language-select select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1em;
+            background: white;
+            cursor: pointer;
+        }
+
+        .language-select select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .language-hint {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <span class="nav-icon">🎤</span>
+            <span>Voice to Text</span>
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/auth/logout" class="logout-link">Logout</a>
+        </div>
+    </nav>
     <div class="container">
         <h1>🎤 Voice to Text Converter</h1>
         <p class="subtitle">Supports Malay, English, and Mixed Language Speech</p>
@@ -242,23 +458,81 @@
             <div class="file-size" id="fileSize"></div>
         </div>
 
+        <!-- Language Selection -->
+        <div class="language-options" id="languageOptions">
+            <h3>🌐 Language Options</h3>
+            <div class="option-group">
+                <div class="language-select">
+                    <label for="languageSelect">Audio Language</label>
+                    <select id="languageSelect">
+                        <option value="auto" selected>Auto Detect (Best for Mixed Languages)</option>
+                        <option value="ms">Bahasa Melayu (Malay)</option>
+                        <option value="en">English</option>
+                        <option value="id">Indonesian</option>
+                        <option value="zh">Chinese</option>
+                        <option value="ta">Tamil</option>
+                        <option value="ar">Arabic</option>
+                        <option value="ja">Japanese</option>
+                        <option value="ko">Korean</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                    </select>
+                    <p class="language-hint">Choose "Auto Detect" for mixed English-Malay audio</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Speaker Diarization Options -->
+        <div class="diarization-options" id="diarizationOptions">
+            <h3>👥 Speaker Detection Options (Optional)</h3>
+            <div class="option-group">
+                <div>
+                    <label for="numSpeakers">Expected Speakers</label>
+                    <input type="number" id="numSpeakers" min="1" max="10" placeholder="Auto">
+                </div>
+                <div>
+                    <label for="minSpeakers">Min Speakers</label>
+                    <input type="number" id="minSpeakers" min="1" max="10" placeholder="1">
+                </div>
+                <div>
+                    <label for="maxSpeakers">Max Speakers</label>
+                    <input type="number" id="maxSpeakers" min="1" max="10" placeholder="10">
+                </div>
+            </div>
+        </div>
+
         <button id="transcribeBtn" disabled>Transcribe Audio</button>
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <div>Processing your audio... This may take a moment.</div>
+            <div id="loadingText">Processing your audio... This may take a moment.</div>
+            <div id="loadingDetails" style="font-size: 0.9em; color: #666; margin-top: 10px;"></div>
         </div>
 
         <div class="error" id="error"></div>
 
         <div class="result-area" id="resultArea">
             <div class="result-label">Transcription Result:</div>
-            <div class="result-text" id="resultText"></div>
+            
+            <!-- Speaker Info Section -->
+            <div class="speaker-info" id="speakerInfo" style="display: none;">
+                <div class="speaker-count">
+                    <span id="speakerCount">0</span> speakers detected
+                </div>
+                <div class="speaker-stats" id="speakerStats"></div>
+            </div>
+            
+            <!-- Segmented Result with Speaker Labels -->
+            <div class="segmented-result" id="segmentedResult"></div>
+            
+            <!-- Full Text Result -->
+            <div class="result-text" id="resultText" style="margin-top: 20px;"></div>
             <button class="copy-btn" id="copyBtn">Copy to Clipboard</button>
         </div>
 
         <div class="supported-formats">
-            <strong>Supported formats:</strong> MP3, WAV, M4A, OGG, FLAC, WEBM, MP4, WMA, AAC (Max 100MB)
+            <strong>Supported formats:</strong> MP3, WAV, M4A, OGG, FLAC, WEBM, MP4, WMA, AAC (Max 500MB)
         </div>
     </div>
 
@@ -331,12 +605,49 @@
 
             const formData = new FormData();
             formData.append('audio', selectedFile);
+            
+            // Add language selection
+            const languageSelect = document.getElementById('languageSelect');
+            const selectedLanguage = languageSelect.value;
+            if (selectedLanguage && selectedLanguage !== 'auto') {
+                formData.append('language', selectedLanguage);
+            }
+            
+            // Add speaker diarization options if provided
+            const numSpeakers = document.getElementById('numSpeakers').value;
+            const minSpeakers = document.getElementById('minSpeakers').value;
+            const maxSpeakers = document.getElementById('maxSpeakers').value;
+            
+            if (numSpeakers) formData.append('num_speakers', numSpeakers);
+            if (minSpeakers) formData.append('min_speakers', minSpeakers);
+            if (maxSpeakers) formData.append('max_speakers', maxSpeakers);
 
             // Show loading, hide results and errors
             loading.classList.add('show');
             resultArea.classList.remove('show');
             error.classList.remove('show');
             transcribeBtn.disabled = true;
+            
+            // Update loading message based on language selection
+            const loadingDetails = document.getElementById('loadingDetails');
+            if (selectedLanguage === 'auto') {
+                loadingDetails.textContent = 'Detecting language automatically...';
+            } else {
+                const languageNames = {
+                    'ms': 'Malay',
+                    'en': 'English',
+                    'id': 'Indonesian',
+                    'zh': 'Chinese',
+                    'ta': 'Tamil',
+                    'ar': 'Arabic',
+                    'ja': 'Japanese',
+                    'ko': 'Korean',
+                    'es': 'Spanish',
+                    'fr': 'French',
+                    'de': 'German'
+                };
+                loadingDetails.textContent = `Using ${languageNames[selectedLanguage] || selectedLanguage} language model...`;
+            }
 
             try {
                 const response = await fetch('/api/transcribe', {
@@ -356,7 +667,18 @@
                 loading.classList.remove('show');
 
                 if (response.ok && data.success) {
+                    // Display full text
                     resultText.textContent = data.text;
+                    
+                    // Display speaker information if available
+                    if (data.speakers && data.speakers.count > 0) {
+                        displaySpeakerInfo(data.speakers);
+                        displaySegmentedResult(data.segments);
+                    } else {
+                        document.getElementById('speakerInfo').style.display = 'none';
+                        document.getElementById('segmentedResult').innerHTML = '';
+                    }
+                    
                     resultArea.classList.add('show');
                 } else {
                     error.textContent = data.error || 'Transcription failed. Please try again.';
@@ -375,6 +697,75 @@
                 transcribeBtn.disabled = false;
             }
         });
+
+        function displaySpeakerInfo(speakers) {
+            const speakerInfo = document.getElementById('speakerInfo');
+            const speakerCount = document.getElementById('speakerCount');
+            const speakerStats = document.getElementById('speakerStats');
+            
+            speakerCount.textContent = speakers.count;
+            
+            // Display speaker badges
+            speakerStats.innerHTML = '';
+            if (speakers.summary) {
+                Object.keys(speakers.summary).forEach((speaker, index) => {
+                    const stats = speakers.summary[speaker];
+                    const badge = document.createElement('span');
+                    badge.className = `speaker-badge speaker-${index}`;
+                    badge.innerHTML = `
+                        <strong>${speaker}</strong>
+                        <span>${stats.segment_count} segments</span>
+                        <span>${(stats.total_time / 60).toFixed(1)} min</span>
+                    `;
+                    speakerStats.appendChild(badge);
+                });
+            }
+            
+            speakerInfo.style.display = 'block';
+        }
+
+        function displaySegmentedResult(segments) {
+            const container = document.getElementById('segmentedResult');
+            container.innerHTML = '';
+            
+            // Group by speaker
+            let currentSpeaker = null;
+            let speakerIndex = 0;
+            const speakerMap = {};
+            
+            segments.forEach((segment, index) => {
+                const speaker = segment.speaker || 'UNKNOWN';
+                
+                // Map speaker names to indices for consistent coloring
+                if (!(speaker in speakerMap)) {
+                    speakerMap[speaker] = speakerIndex;
+                    speakerIndex++;
+                }
+                
+                const div = document.createElement('div');
+                div.className = `transcription-segment speaker-${speakerMap[speaker]}`;
+                
+                const startTime = formatTime(segment.start);
+                const endTime = formatTime(segment.end);
+                
+                div.innerHTML = `
+                    <div class="segment-header">
+                        <span class="segment-speaker">${speaker}</span>
+                        <span class="segment-time">${startTime} - ${endTime}</span>
+                    </div>
+                    <div class="segment-text">${segment.text || ''}</div>
+                `;
+                
+                container.appendChild(div);
+            });
+        }
+
+        function formatTime(seconds) {
+            if (!seconds && seconds !== 0) return '00:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
 
         copyBtn.addEventListener('click', () => {
             const text = resultText.textContent;
