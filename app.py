@@ -18,6 +18,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import numpy as np
 from datetime import datetime
+import time
 
 # Load environment variables
 load_dotenv()
@@ -209,6 +210,7 @@ def transcribe():
     """Transcribe audio file and save to user history"""
     filename = None
     temp_path = None
+    request_start = time.perf_counter()
 
     try:
         # Check if file is present
@@ -253,6 +255,22 @@ def transcribe():
         # If not specified, Whisper will auto-detect (best for mixed languages)
         language_pref = request.form.get("language", "auto")
 
+        # Speaker diarization is optional and can significantly increase processing time.
+        # Run it only when explicitly requested (or when diarization params are provided).
+        diarization_enabled = request.form.get("enable_diarization", "").lower() in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
+        diarization_params_present = any(
+            request.form.get(param)
+            for param in ("num_speakers", "min_speakers", "max_speakers")
+        )
+        should_run_diarization = (
+            DIARIZATION_AVAILABLE and (diarization_enabled or diarization_params_present)
+        )
+
         # Prepare transcription parameters
         transcribe_params = {"fp16": False, "verbose": False, "task": "transcribe"}
 
@@ -282,7 +300,7 @@ def transcribe():
         speaker_summary = {}
         num_speakers = 0
 
-        if DIARIZATION_AVAILABLE:
+        if should_run_diarization:
             try:
                 logger.info("Starting speaker diarization...")
                 diarizer = get_diarizer()
@@ -315,6 +333,10 @@ def transcribe():
             except Exception as e:
                 logger.warning(f"Speaker diarization failed: {str(e)}")
                 # Continue without speaker identification
+        elif DIARIZATION_AVAILABLE:
+            logger.info(
+                "Speaker diarization skipped (not requested) to reduce processing latency"
+            )
 
         # Extract transcription text
         text = result.get("text", "").strip()
@@ -339,6 +361,10 @@ def transcribe():
         logger.info(
             f"Transcription saved to user {current_user.username}'s history (ID: {transcription_record.id})"
         )
+        logger.info(
+            "Request completed in %.2fs",
+            time.perf_counter() - request_start,
+        )
 
         return jsonify(
             {
@@ -361,6 +387,10 @@ def transcribe():
         filename_ctx = f" (file: {filename})" if filename else ""
         logger.error(
             f"Error during transcription{filename_ctx}: {str(e)}", exc_info=True
+        )
+        logger.info(
+            "Request failed in %.2fs",
+            time.perf_counter() - request_start,
         )
         # Clean up file if it exists
         if temp_path and os.path.exists(temp_path):
@@ -431,5 +461,6 @@ def serve_static(filename):
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5001))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    debug_mode = os.environ.get("FLASK_DEBUG", "true").lower() == "true"
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)

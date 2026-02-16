@@ -57,6 +57,7 @@ A web application that converts uploaded voice recordings to text, with excellen
 3. **Upload an audio file:**
    - Click the upload area or drag and drop an audio file
    - Click "Transcribe Audio" button
+   - (Optional) Fill speaker fields only when you need speaker detection (it adds extra processing time)
    - Wait for processing (may take a few seconds to minutes depending on file size)
    - View the transcription result
    - Copy the text to clipboard if needed
@@ -149,6 +150,28 @@ docker run -p 5000:5000 voicetotext
 
 ### Transcription failed: No such file or directory: 'ffmpeg'
 The server (or container) where the app runs does not have ffmpeg installed. Install ffmpeg on the server — see [Deployment (server)](#deployment-server) above.
+
+### nginx error: upstream timed out (110: Connection timed out) while reading response header from upstream
+This usually means transcription is still running, but nginx timed out before Flask returned a response.
+
+1. Increase nginx upstream timeouts for `/api/transcribe`:
+   ```nginx
+   location /api/transcribe {
+       proxy_pass http://127.0.0.1:5000;
+       proxy_connect_timeout 60s;
+       proxy_send_timeout 600s;
+       proxy_read_timeout 600s;
+       send_timeout 600s;
+       client_max_body_size 500M;
+   }
+   ```
+
+2. If using Gunicorn, increase worker timeout as well:
+   ```bash
+   gunicorn app:app --bind 127.0.0.1:5000 --workers 2 --threads 2 --timeout 600
+   ```
+
+3. Speaker diarization now runs only when explicitly requested (speaker fields provided), which helps reduce timeout risk for normal transcriptions.
 
 ### Model download issues
 If the model fails to download automatically, you can manually download it:
