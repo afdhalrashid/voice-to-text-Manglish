@@ -400,8 +400,6 @@ def transcribe():
                 logger.warning(f"Could not remove temp file: {temp_path}")
         return jsonify({"error": f"Transcription failed: {str(e)}"}), 500
 
-<<<<<<< Updated upstream
-
 @app.route("/api/history", methods=["GET"])
 @login_required
 def get_history():
