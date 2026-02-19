@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "0.0.0.0:5000:5000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DATABASE_URL=sqlite:///voice2text.db
+    volumes:
+      - ./uploads:/app/uploads
+      - ./.whisper_cache:/app/.whisper_cache
+      - ./logs:/app/logs
+      - ./.env:/app/.env
+      - ./instance:/app/instance
+    restart: unless-stopped
+
+  worker:
+    build: .
+    command: celery -A app.celery worker --loglevel=info --concurrency=2 --max-tasks-per-child=1
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DATABASE_URL=sqlite:///voice2text.db
+      - CELERY_TASK_TIMEOUT=7200
+    volumes:
+      - ./uploads:/app/uploads
+      - ./.whisper_cache:/app/.whisper_cache
+      - ./logs:/app/logs
+      - ./.env:/app/.env
+      - ./instance:/app/instance
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "0.0.0.0:6380:6379"
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  flower:
+    build: .
+    command: celery -A app.celery flower --port=5555
+    ports:
+      - "0.0.0.0:5555:5555"
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    restart: unless-stopped
+
+volumes:
+  redis_data:

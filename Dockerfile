@@ -10,7 +10,18 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# Copy remaining files first
+COPY auth.py diarization.py ./
+COPY frontend/ frontend/
+
+# Then override with async versions
+COPY frontend/index_async.html frontend/index.html
+COPY frontend/dashboard_async.html frontend/dashboard.html
+
+# Copy updated async files
+COPY app_updated.py app.py
+COPY models_updated.py models.py
+COPY tasks.py worker.py ./
 
 # Whisper model cache and uploads
 ENV WHISPER_CACHE_DIR=/app/.whisper_cache
