@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Voice to Text Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+        }
+
+        .logo h1 {
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            background: #f0f2ff;
+            color: #764ba2;
+        }
+
+        .nav-links .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .nav-links .btn-primary:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6a4190);
+            color: white;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            font-size: 48px;
+            opacity: 0.8;
+        }
+
+        .stat-info h3 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Tabs */
+        .tabs {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .tab-navigation {
+            display: flex;
+            background: #f8f9ff;
+            border-bottom: 1px solid #e0e4e7;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            background: white;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .tab-content {
+            padding: 30px;
+            min-height: 400px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* Jobs Section */
+        .jobs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .jobs-title {
+            font-size: 1.5em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .jobs-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: #f8f9ff;
+            color: #667eea;
+            border: 2px solid #e0e4e7;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .job-card {
+            background: #f8f9ff;
+            border: 1px solid #e0e4e7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .job-card:hover {
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .job-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .job-id {
+            font-family: monospace;
+            color: #666;
+            font-size: 0.85em;
+            background: #e0e4e7;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .job-status {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-processing { background: #cce5ff; color: #0056b3; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-failed { background: #f8d7da; color: #721c24; }
+        .status-cancelled { background: #e0e4e7; color: #6c757d; }
+
+        .job-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .job-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .detail-label {
+            font-size: 0.8em;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .job-progress {
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e4e7;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.85em;
+            color: #666;
+            text-align: center;
+        }
+
+        .job-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .btn-view {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-cancel {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #c82333;
+        }
+
+        .btn-retry {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-retry:hover {
+            background: #e0a800;
+        }
+
+        /* History Section */
+        .history-item {
+            background: #f8f9ff;
+            border: 1px solid #e0e4e7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .history-filename {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .history-date {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .transcription-preview {
+            background: white;
+            border: 1px solid #e0e4e7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            max-height: 100px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .transcription-text {
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .transcription-fade {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(transparent, white);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab-navigation {
+                flex-direction: column;
+            }
+            
+            .jobs-filters {
+                flex-direction: column;
+            }
+            
+            .job-header, .history-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .job-actions {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🎤</div>
+                <h1>Voice to Text Dashboard</h1>
+            </div>
+            <div class="nav-links">
+                <a href="/">🏠 Home</a>
+                <a href="/logout">🚪 Logout</a>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-info">
+                    <h3 id="totalJobs">-</h3>
+                    <p>Total Jobs</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-info">
+                    <h3 id="completedJobs">-</h3>
+                    <p>Completed</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-info">
+                    <h3 id="activeJobs">-</h3>
+                    <p>Active Jobs</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-info">
+                    <h3 id="totalTranscriptions">-</h3>
+                    <p>Transcriptions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab-navigation">
+                <button class="tab-btn active" data-tab="jobs">🔄 Active Jobs</button>
+                <button class="tab-btn" data-tab="history">📚 History</button>
+            </div>
+
+            <!-- Jobs Tab -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="jobsTab">
+                    <div class="jobs-header">
+                        <h2 class="jobs-title">Job Management</h2>
+                        <button class="refresh-btn" onclick="refreshJobs()">🔄 Refresh</button>
+                    </div>
+
+                    <div class="jobs-filters">
+                        <button class="filter-btn active" data-status="all">All</button>
+                        <button class="filter-btn" data-status="pending">Pending</button>
+                        <button class="filter-btn" data-status="processing">Processing</button>
+                        <button class="filter-btn" data-status="completed">Completed</button>
+                        <button class="filter-btn" data-status="failed">Failed</button>
+                    </div>
+
+                    <div id="jobsList">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading jobs...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Tab -->
+                <div class="tab-pane" id="historyTab">
+                    <div class="jobs-header">
+                        <h2 class="jobs-title">Transcription History</h2>
+                        <button class="refresh-btn" onclick="refreshHistory()">🔄 Refresh</button>
+                    </div>
+
+                    <div id="historyList">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading history...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transcription Modal -->
+    <div class="modal" id="transcriptionModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 id="modalTitle">Transcription Details</h2>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentFilter = 'all';
+        let jobs = [];
+        let history = [];
+        let refreshInterval = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            loadData();
+            startAutoRefresh();
+        });
+
+        function setupEventListeners() {
+            // Tab switching
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    switchTab(this.dataset.tab);
+                });
+            });
+
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    setFilter(this.dataset.status);
+                });
+            });
+        }
+
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Update tab panes
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+
+            // Refresh data for the active tab
+            if (tabName === 'jobs') {
+                refreshJobs();
+            } else if (tabName === 'history') {
+                refreshHistory();
+            }
+        }
+
+        function setFilter(status) {
+            currentFilter = status;
+
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-status="${status}"]`).classList.add('active');
+
+            // Filter and display jobs
+            displayJobs();
+        }
+
+        async function loadData() {
+            await Promise.all([
+                loadStats(),
+                loadJobs(),
+                loadHistory()
+            ]);
+        }
+
+        async function loadStats() {
+            try {
+                const [jobsResponse, historyResponse] = await Promise.all([
+                    fetch('/api/jobs'),
+                    fetch('/api/history')
+                ]);
+
+                if (jobsResponse.ok && historyResponse.ok) {
+                    const jobsData = await jobsResponse.json();
+                    const historyData = await historyResponse.json();
+
+                    const totalJobs = jobsData.total || 0;
+                    const completedJobs = jobsData.jobs ? jobsData.jobs.filter(j => j.status === 'completed').length : 0;
+                    const activeJobs = jobsData.jobs ? jobsData.jobs.filter(j => ['pending', 'processing'].includes(j.status)).length : 0;
+                    const totalTranscriptions = historyData.total || 0;
+
+                    document.getElementById('totalJobs').textContent = totalJobs;
+                    document.getElementById('completedJobs').textContent = completedJobs;
+                    document.getElementById('activeJobs').textContent = activeJobs;
+                    document.getElementById('totalTranscriptions').textContent = totalTranscriptions;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadJobs() {
+            try {
+                const response = await fetch('/api/jobs?per_page=50');
+                const data = await response.json();
+
+                if (response.ok) {
+                    jobs = data.jobs || [];
+                    displayJobs();
+                } else {
+                    throw new Error(data.error || 'Failed to load jobs');
+                }
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+                document.getElementById('jobsList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">❌</div>
+                        <h3>Error Loading Jobs</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadHistory() {
+            try {
+                const response = await fetch('/api/history?per_page=20');
+                const data = await response.json();
+
+                if (response.ok) {
+                    history = data.history || [];
+                    displayHistory();
+                } else {
+                    throw new Error(data.error || 'Failed to load history');
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+                document.getElementById('historyList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">❌</div>
+                        <h3>Error Loading History</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayJobs() {
+            const filteredJobs = currentFilter === 'all' ? 
+                jobs : jobs.filter(job => job.status === currentFilter);
+
+            const jobsList = document.getElementById('jobsList');
+
+            if (filteredJobs.length === 0) {
+                jobsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <h3>No Jobs Found</h3>
+                        <p>No jobs match the current filter. Try submitting a transcription job!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            jobsList.innerHTML = filteredJobs.map(job => createJobCard(job)).join('');
+        }
+
+        function createJobCard(job) {
+            const createdDate = new Date(job.created_at).toLocaleString();
+            const completedDate = job.completed_at ? new Date(job.completed_at).toLocaleString() : null;
+            
+            return `
+                <div class="job-card">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">${job.filename}</div>
+                            <div class="job-id">Job ID: ${job.id}</div>
+                        </div>
+                        <div class="job-status status-${job.status}">${job.status}</div>
+                    </div>
+                    
+                    <div class="job-details">
+                        <div class="job-detail">
+                            <span class="detail-label">Created</span>
+                            <span class="detail-value">${createdDate}</span>
+                        </div>
+                        ${completedDate ? `
+                            <div class="job-detail">
+                                <span class="detail-label">Completed</span>
+                                <span class="detail-value">${completedDate}</span>
+                            </div>
+                        ` : ''}
+                        <div class="job-detail">
+                            <span class="detail-label">File Size</span>
+                            <span class="detail-value">${formatFileSize(job.file_size)}</span>
+                        </div>
+                        ${job.processing_time ? `
+                            <div class="job-detail">
+                                <span class="detail-label">Processing Time</span>
+                                <span class="detail-value">${job.processing_time.toFixed(2)}s</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    ${['pending', 'processing'].includes(job.status) ? `
+                        <div class="job-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${job.progress || 0}%"></div>
+                            </div>
+                            <div class="progress-text">${job.progress || 0}% complete</div>
+                        </div>
+                    ` : ''}
+                    
+                    ${job.error_message ? `
+                        <div class="job-detail" style="margin-bottom: 15px;">
+                            <span class="detail-label">Error</span>
+                            <span class="detail-value" style="color: #dc3545;">${job.error_message}</span>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="job-actions">
+                        ${job.status === 'completed' && job.result_data ? 
+                            `<button class="btn btn-view" onclick="viewTranscription('${job.id}')">👁️ View Result</button>` : ''}
+                        ${['pending', 'processing'].includes(job.status) ? 
+                            `<button class="btn btn-cancel" onclick="cancelJob('${job.id}')">❌ Cancel</button>` : ''}
+                        ${job.status === 'failed' ? 
+                            `<button class="btn btn-retry" onclick="retryJob('${job.id}')">🔄 Retry</button>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayHistory() {
+            const historyList = document.getElementById('historyList');
+
+            if (history.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📚</div>
+                        <h3>No Transcription History</h3>
+                        <p>Your transcription history will appear here once you complete some jobs.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            historyList.innerHTML = history.map(item => createHistoryCard(item)).join('');
+        }
+
+        function createHistoryCard(item) {
+            const createdDate = new Date(item.created_at).toLocaleString();
+            const truncatedText = item.transcription_text.length > 200 ? 
+                item.transcription_text.substring(0, 200) + '...' : item.transcription_text;
+            
+            return `
+                <div class="history-item">
+                    <div class="history-header">
+                        <div>
+                            <div class="history-filename">${item.filename}</div>
+                            <div class="history-date">${createdDate}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="transcription-preview">
+                        <div class="transcription-text">${truncatedText}</div>
+                        ${item.transcription_text.length > 200 ? '<div class="transcription-fade"></div>' : ''}
+                    </div>
+                    
+                    <div class="job-details">
+                        <div class="job-detail">
+                            <span class="detail-label">Language</span>
+                            <span class="detail-value">${item.language || 'Unknown'}</span>
+                        </div>
+                        <div class="job-detail">
+                            <span class="detail-label">File Size</span>
+                            <span class="detail-value">${formatFileSize(item.file_size)}</span>
+                        </div>
+                        ${item.processing_time ? `
+                            <div class="job-detail">
+                                <span class="detail-label">Processing Time</span>
+                                <span class="detail-value">${item.processing_time.toFixed(2)}s</span>
+                            </div>
+                        ` : ''}
+                        ${item.num_speakers ? `
+                            <div class="job-detail">
+                                <span class="detail-label">Speakers</span>
+                                <span class="detail-value">${item.num_speakers}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="job-actions">
+                        <button class="btn btn-view" onclick="viewHistoryTranscription(${item.id})">👁️ View Full Text</button>
+                        <button class="btn btn-cancel" onclick="deleteHistory(${item.id})">🗑️ Delete</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function cancelJob(jobId) {
+            if (!confirm('Are you sure you want to cancel this job?')) return;
+
+            try {
+                const response = await fetch(`/api/jobs/${jobId}`, { method: 'DELETE' });
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('Job cancelled successfully', 'success');
+                    refreshJobs();
+                } else {
+                    throw new Error(data.error || 'Failed to cancel job');
+                }
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function viewTranscription(jobId) {
+            const job = jobs.find(j => j.id === jobId);
+            if (!job || !job.result_data) {
+                showAlert('Transcription result not available', 'error');
+                return;
+            }
+
+            const result = job.result_data;
+            const modalContent = `
+                <div style="margin-top: 20px;">
+                    <h3>📝 Transcription Result</h3>
+                    <div style="background: #f8f9ff; padding: 20px; border-radius: 8px; margin: 15px 0; max-height: 300px; overflow-y: auto;">
+                        <pre style="white-space: pre-wrap; font-family: inherit; margin: 0;">${result.transcription_text}</pre>
+                    </div>
+                    
+                    <div class="job-details">
+                        <div class="job-detail">
+                            <span class="detail-label">Language</span>
+                            <span class="detail-value">${result.language || 'Unknown'}</span>
+                        </div>
+                        <div class="job-detail">
+                            <span class="detail-label">Processing Time</span>
+                            <span class="detail-value">${result.processing_time ? result.processing_time.toFixed(2) + 's' : 'Unknown'}</span>
+                        </div>
+                        <div class="job-detail">
+                            <span class="detail-label">Model Used</span>
+                            <span class="detail-value">${result.model_used || 'Unknown'}</span>
+                        </div>
+                        ${result.num_speakers ? `
+                            <div class="job-detail">
+                                <span class="detail-label">Speakers</span>
+                                <span class="detail-value">${result.num_speakers}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button class="btn btn-view" onclick="copyToClipboard('${result.transcription_text.replace(/'/g, "\\'")}')">📋 Copy Text</button>
+                    </div>
+                </div>
+            `;
+
+            showModal(`Transcription - ${job.filename}`, modalContent);
+        }
+
+        async function viewHistoryTranscription(historyId) {
+            const item = history.find(h => h.id === historyId);
+            if (!item) {
+                showAlert('Transcription not found', 'error');
+                return;
+            }
+
+            const modalContent = `
+                <div style="margin-top: 20px;">
+                    <div style="background: #f8f9ff; padding: 20px; border-radius: 8px; margin: 15px 0; max-height: 400px; overflow-y: auto;">
+                        <pre style="white-space: pre-wrap; font-family: inherit; margin: 0;">${item.transcription_text}</pre>
+                    </div>
+                    
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button class="btn btn-view" onclick="copyToClipboard('${item.transcription_text.replace(/'/g, "\\'")}')">📋 Copy Text</button>
+                    </div>
+                </div>
+            `;
+
+            showModal(`Transcription - ${item.filename}`, modalContent);
+        }
+
+        async function deleteHistory(historyId) {
+            if (!confirm('Are you sure you want to delete this transcription?')) return;
+
+            try {
+                const response = await fetch(`/api/history/${historyId}`, { method: 'DELETE' });
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('Transcription deleted successfully', 'success');
+                    refreshHistory();
+                } else {
+                    throw new Error(data.error || 'Failed to delete transcription');
+                }
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function retryJob(jobId) {
+            // For retry, we could redirect to main page with file info
+            // or implement a retry API endpoint
+            showAlert('Retry functionality: Please upload the file again on the main page', 'info');
+        }
+
+        function refreshJobs() {
+            loadJobs().then(() => loadStats());
+        }
+
+        function refreshHistory() {
+            loadHistory().then(() => loadStats());
+        }
+
+        function startAutoRefresh() {
+            // Refresh every 30 seconds if there are active jobs
+            refreshInterval = setInterval(async () => {
+                const hasActiveJobs = jobs.some(job => ['pending', 'processing'].includes(job.status));
+                if (hasActiveJobs) {
+                    await refreshJobs();
+                }
+            }, 30000);
+        }
+
+        function showModal(title, content) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalContent').innerHTML = content;
+            document.getElementById('transcriptionModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('transcriptionModal').classList.remove('show');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showAlert('Text copied to clipboard!', 'success');
+            }).catch(err => {
+                showAlert('Failed to copy text', 'error');
+            });
+        }
+
+        function formatFileSize(bytes) {
+            if (!bytes) return 'Unknown';
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function showAlert(message, type) {
+            // Simple alert for now - could be enhanced with a proper notification system
+            if (type === 'success') {
+                alert('✅ ' + message);
+            } else if (type === 'error') {
+                alert('❌ ' + message);
+            } else {
+                alert('ℹ️ ' + message);
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('transcriptionModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        });
+    </script>
+</body>
+</html>
